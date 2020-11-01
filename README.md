@@ -11,6 +11,7 @@ $ ./dbgen -s 1000 -T d # date
 ```
 
 ### Creating tables in ClickHouse:
+![star-schema-benchmark](./datasets/star-schema-benchmark.png)
 ```sql
 CREATE TABLE customer
 (
