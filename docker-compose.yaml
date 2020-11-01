@@ -65,8 +65,8 @@ services:
     container_name: "prometheus-node-exporter"
     user: "root"
     pid: "host"
-    volumes:
-      - "/:/host:ro,rslave"
+    # volumes:
+    #   - "/:/host:ro,rslave"
     command:
       - "--path.rootfs=/host"
     expose:
@@ -79,8 +79,8 @@ services:
     image: "bitnami/kafka:latest"
     container_name: "kafka"
     expose:
-      - "9092:9092"
-      - "29092:29092"
+      - "9092"
+      - "29092"
     environment:
       - "KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181"
       - "ALLOW_PLAINTEXT_LISTENER=yes"

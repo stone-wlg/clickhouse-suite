@@ -135,3 +135,41 @@ INNER JOIN customer AS c ON c.C_CUSTKEY = l.LO_CUSTKEY
 INNER JOIN supplier AS s ON s.S_SUPPKEY = l.LO_SUPPKEY
 INNER JOIN part AS p ON p.P_PARTKEY = l.LO_PARTKEY;
 ```
+
+### Running the queries:
+```sql
+SELECT sum(LO_EXTENDEDPRICE * LO_DISCOUNT) AS revenue
+FROM lineorder_flat
+WHERE toYear(LO_ORDERDATE) = 1993 AND LO_DISCOUNT BETWEEN 1 AND 3 AND LO_QUANTITY < 25;
+
+SELECT
+    C_NATION,
+    S_NATION,
+    toYear(LO_ORDERDATE) AS year,
+    sum(LO_REVENUE) AS revenue
+FROM lineorder_flat
+WHERE C_REGION = 'ASIA' AND S_REGION = 'ASIA' AND year >= 1992 AND year <= 1997
+GROUP BY
+    C_NATION,
+    S_NATION,
+    year
+ORDER BY
+    year ASC,
+    revenue DESC;
+
+SELECT
+    toYear(LO_ORDERDATE) AS year,
+    S_CITY,
+    P_BRAND,
+    sum(LO_REVENUE - LO_SUPPLYCOST) AS profit
+FROM lineorder_flat
+WHERE S_NATION = 'UNITED STATES' AND (year = 1997 OR year = 1998) AND P_CATEGORY = 'MFGR#14'
+GROUP BY
+    year,
+    S_CITY,
+    P_BRAND
+ORDER BY
+    year ASC,
+    S_CITY ASC,
+    P_BRAND ASC;
+```
