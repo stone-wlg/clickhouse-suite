@@ -1,0 +1,106 @@
+version: "3.7"
+services:
+  clickhouse:
+    image: "yandex/clickhouse-server:20.9.4.76"
+    container_name: "clickhouse"
+    expose:
+      - "9100"
+      - "9109"
+      - "9363"
+    ports:
+      - "8123:8123"
+    volumes:
+      - "./clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+      # - "./clickhouse/metrika.xml:/etc/metrika.xml"
+      - "./clickhouse/data:/var/lib/clickhouse"
+      - "./datasets:/datasets"
+    ulimits:
+      nofile: 655360
+      as: -1
+      memlock: -1
+      nproc: -1
+      fsize: -1
+    restart: "unless-stopped"
+    networks:
+      - "clickhouse-net"
+
+  grafana:
+    image: "grafana/grafana:7.2.1"
+    container_name: "grafana"
+    user: "root"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/data:/var/lib/grafana"
+      - "./grafana/logs:/var/log/grafana"
+      - "./grafana/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+    networks:
+      - "clickhouse-net"
+    restart: "unless-stopped"
+
+  prometheus:
+    image: "prom/prometheus:v2.22.0"
+    container_name: "prometheus"
+    user: "root"
+    volumes:
+      - "./prometheus/data:/prometheus"
+      - "./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--storage.tsdb.retention.time=15d"
+      # - '--web.external-url=www.baidu.com'
+    ports:
+      - "9090:9090"
+    networks:
+      - "clickhouse-net"
+    restart: "unless-stopped"
+
+  prometheus-node-exporter:
+    image: "prom/node-exporter:v1.0.1"
+    container_name: "prometheus-node-exporter"
+    user: "root"
+    pid: "host"
+    volumes:
+      - "/:/host:ro,rslave"
+    command:
+      - "--path.rootfs=/host"
+    expose:
+      - "9100"
+    networks:
+      - "clickhouse-net"
+    restart: "unless-stopped"
+
+  kafka:
+    image: "bitnami/kafka:latest"
+    container_name: "kafka"
+    expose:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      - "KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "ALLOW_PLAINTEXT_LISTENER=yes"
+      - "KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      - "KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092"
+      - "KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092"
+    networks:
+      - "clickhouse-net"
+    depends_on:
+      - "zookeeper"
+
+  zookeeper:
+    image: "zookeeper:3.6.2"
+    container_name: "zookeeper"
+    expose:
+      - "2181"
+    networks:
+      - "clickhouse-net"
+
+networks:
+  clickhouse-net:
+    external: false
+    name: "clickhouse-net"
