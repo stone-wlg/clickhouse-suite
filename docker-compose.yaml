@@ -14,6 +14,7 @@ services:
       # - "./clickhouse/metrika.xml:/etc/metrika.xml"
       - "./clickhouse/data:/var/lib/clickhouse"
       - "./datasets:/datasets"
+      - "./benchmark:/benchmark"
     ulimits:
       nofile: 655360
       as: -1
