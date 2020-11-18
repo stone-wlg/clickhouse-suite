@@ -173,3 +173,28 @@ ORDER BY
     S_CITY ASC,
     P_BRAND ASC;
 ```
+
+# Storage Policy
+```sql
+DROP TABLE IF EXISTS table_with_non_default_policy;
+
+CREATE TABLE IF NOT EXISTS table_with_non_default_policy (
+    EventDate Date,
+    OrderID UInt64,
+    BannerID UInt64,
+    SearchPhrase String
+) ENGINE = MergeTree
+ORDER BY (OrderID, BannerID)
+PARTITION BY toYYYYMM(EventDate)
+SETTINGS storage_policy = 'moving_from_ssd_to_hdd';
+
+SELECT * FROM table_with_non_default_policy;
+SELECT * FROM `system`.disks;
+SELECT * FROM `system`.storage_policies;
+SELECT `partition`, name, part_type, active, `path`, disk_name FROM `system`.parts WHERE `table` = 'table_with_non_default_policy';
+
+INSERT INTO table_with_non_default_policy VALUES ('2020-11-18', 123, 456, 'taotao');
+
+ALTER TABLE table_with_non_default_policy MOVE PART '202011_1_2_1' TO VOLUME 'hot';
+ALTER TABLE table_with_non_default_policy MOVE PARTITION '20201111' TO DISK 'ssd';
+```

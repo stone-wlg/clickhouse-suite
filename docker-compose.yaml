@@ -11,8 +11,11 @@ services:
       - "8123:8123"
     volumes:
       - "./clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+      - "./clickhouse/config.d/storage.xml:/etc/clickhouse-server/config.d/storage.xml"
       # - "./clickhouse/metrika.xml:/etc/metrika.xml"
       - "./clickhouse/data:/var/lib/clickhouse"
+      - "./clickhouse/log:/var/log/clickhouse-server"
+      - "./clickhouse/mnt:/mnt"
       - "./datasets:/datasets"
       - "./benchmark:/benchmark"
     ulimits:

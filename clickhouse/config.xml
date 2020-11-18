@@ -13,7 +13,8 @@
         <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
-        <!-- <console>1</console> --> <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
+        <!-- <console>1</console> -->
+        <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
 
         <!-- Per level overrides (legacy):
 
@@ -57,7 +58,8 @@
         <endpoint>https://6f33034cfe684dd7a3ab9875e57b1c8d@o388870.ingest.sentry.io/5226277</endpoint>
     </send_crash_reports>
 
-    <!--display_name>production</display_name--> <!-- It is the name that will be shown in the client -->
+    <!--display_name>production</display_name-->
+    <!-- It is the name that will be shown in the client -->
     <http_port>8123</http_port>
     <tcp_port>9000</tcp_port>
     <mysql_port>9004</mysql_port>
@@ -68,7 +70,8 @@
     -->
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/ClickHouse-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71 -->
     <openSSL>
-        <server> <!-- Used for https server AND secure tcp port -->
+        <server>
+            <!-- Used for https server AND secure tcp port -->
             <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
             <certificateFile>/etc/clickhouse-server/server.crt</certificateFile>
             <privateKeyFile>/etc/clickhouse-server/server.key</privateKeyFile>
@@ -81,7 +84,8 @@
             <preferServerCiphers>true</preferServerCiphers>
         </server>
 
-        <client> <!-- Used for connecting to https dictionary source and secured Zookeeper communication -->
+        <client>
+            <!-- Used for connecting to https dictionary source and secured Zookeeper communication -->
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
             <disableProtocols>sslv2,sslv3</disableProtocols>
@@ -299,7 +303,7 @@
     <!-- Configuration of clusters that could be used in Distributed tables.
          https://clickhouse.tech/docs/en/operations/table_engines/distributed/
       -->
-    <remote_servers incl="clickhouse_remote_servers" >
+    <remote_servers incl="clickhouse_remote_servers">
         <!-- Test only shard config for testing distributed storage -->
         <test_shard_localhost>
             <shard>
@@ -316,18 +320,18 @@
             </shard>
         </test_shard_localhost>
         <test_cluster_two_shards_localhost>
-             <shard>
-                 <replica>
-                     <host>localhost</host>
-                     <port>9000</port>
-                 </replica>
-             </shard>
-             <shard>
-                 <replica>
-                     <host>localhost</host>
-                     <port>9000</port>
-                 </replica>
-             </shard>
+            <shard>
+                <replica>
+                    <host>localhost</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+            <shard>
+                <replica>
+                    <host>localhost</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
         </test_cluster_two_shards_localhost>
         <test_cluster_two_shards>
             <shard>
@@ -464,7 +468,7 @@
         asynchronous_metrics - send data from table system.asynchronous_metrics
         status_info - send data from different component from CH, ex: Dictionaries status
     -->
-    
+
     <prometheus>
         <endpoint>/metrics</endpoint>
         <port>9363</port>
@@ -474,7 +478,7 @@
         <asynchronous_metrics>true</asynchronous_metrics>
         <status_info>true</status_info>
     </prometheus>
-   
+
 
     <!-- Query log. Used only for queries with setting log_queries = 1. -->
     <query_log>
@@ -593,7 +597,7 @@
          Don't do that if you just started using ClickHouse.
       -->
     <compression incl="clickhouse_compression">
-    <!--
+        <!--
         <!- - Set of variants. Checked in order. Last matching case wins. If nothing matches, lz4 will be used. - ->
         <case>
 

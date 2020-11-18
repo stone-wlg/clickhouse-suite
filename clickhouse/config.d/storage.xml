@@ -1,0 +1,44 @@
+<yandex>
+  <storage_configuration>
+    <disks>
+      <ssd>
+        <path>/mnt/ssd/clickhouse/</path>
+        <keep_free_space_bytes>10485760</keep_free_space_bytes>
+      </ssd>
+      <hdd1>
+        <path>/mnt/hdd1/clickhouse/</path>
+        <keep_free_space_bytes>10485760</keep_free_space_bytes>
+      </hdd1>
+      <hdd2>
+        <path>/mnt/hdd2/clickhouse/</path>
+        <keep_free_space_bytes>10485760</keep_free_space_bytes>
+      </hdd2>
+    </disks>
+
+    <policies>
+      <hdd_in_order>
+        <!-- round-robin -->
+        <volumes>
+          <single>
+            <disk>hdd1</disk>
+            <disk>hdd2</disk>
+          </single>
+        </volumes>
+      </hdd_in_order>
+
+      <moving_from_ssd_to_hdd>
+        <volumes>
+          <hot>
+            <disk>ssd</disk>
+            <max_data_part_size_bytes>10485760</max_data_part_size_bytes>
+          </hot>            
+          <cold>
+            <disk>hdd1</disk>
+            <disk>hdd2</disk>
+          </cold>        
+        </volumes>
+        <move_factor>0.2</move_factor>
+      </moving_from_ssd_to_hdd>
+    </policies>
+  </storage_configuration>
+</yandex>

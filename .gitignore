@@ -1,4 +1,5 @@
 sample/
 data/
 logs/
+log/
 *.tbl
