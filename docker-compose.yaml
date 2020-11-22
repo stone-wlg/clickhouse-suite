@@ -3,6 +3,9 @@ services:
   clickhouse:
     image: "yandex/clickhouse-server:20.9.4.76"
     container_name: "clickhouse"
+    environment: 
+      - "TZ=Asia/Shanghai"
+      - "HOSTNAME=clickHouse"
     expose:
       - "9100"
       - "9109"
@@ -32,13 +35,14 @@ services:
     image: "grafana/grafana:7.2.1"
     container_name: "grafana"
     user: "root"
+    environment: 
+      - "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=vertamedia-clickhouse-datasource"
     ports:
       - "3000:3000"
     volumes:
-      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
       - "./grafana/data:/var/lib/grafana"
       - "./grafana/logs:/var/log/grafana"
-      - "./grafana/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"      
       - "./grafana/provisioning:/etc/grafana/provisioning"
     networks:
       - "clickhouse-net"

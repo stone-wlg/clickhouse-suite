@@ -30,3 +30,17 @@ echo "SELECT * FROM system.numbers LIMIT 10000000 OFFSET 10000000;" | clickhouse
 # localhost:9000, queries 7664, QPS: 51.732, RPS: 1036949952.745, MiB/s: 7911.300, result RPS: 517323156.365, result MiB/s: 3946.862.
 ```
 
+## SQL LIKE
+```sql
+# Clear page cache
+sync; echo 3 > /proc/sys/vm/drop_caches
+# 10 rows in set. Elapsed: 34.399 sec. Processed 693.36 thousand rows, 65.69 MB (20.16 thousand rows/s., 1.91 MB/s.)
+SELECT * FROM default.lineorder_flat WHERE S_ADDRESS LIKE '%Cdn%' LIMIT 10;
+# 10 rows in set. Elapsed: 15.178 sec. Processed 401.41 thousand rows, 93.92 MB (26.45 thousand rows/s., 6.19 MB/s.)
+SELECT * FROM default.lineorder_flat WHERE toYear(LO_ORDERDATE) = 1992 AND S_ADDRESS LIKE '%Cdn%' LIMIT 10;
+# 10 rows in set. Elapsed: 2.094 sec. Processed 167.31 thousand rows, 15.44 MB (79.91 thousand rows/s., 7.37 MB/s.)
+SELECT * FROM default.lineorder_flat WHERE LO_ORDERDATE = '1992-01-01' AND S_ADDRESS LIKE '%Cdn%' LIMIT 10;
+# 1 rows in set. Elapsed: 0.819 sec. Processed 8.19 thousand rows, 1.92 MB (10.00 thousand rows/s., 2.34 MB/s.)
+SELECT * FROM default.lineorder_flat WHERE LO_ORDERDATE = '1992-01-01' AND LO_ORDERKEY = 280247943 AND S_ADDRESS LIKE '%Cdn%' LIMIT 10;
+```
+
